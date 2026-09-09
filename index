@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه محاسبه و تحلیل مزاج بر اساس عناصر آسترولوژی</title>
+    <!-- Vazirmatn Font -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #dcdfe6;
+            --primary-color: #2980b9;
+            --header-bg: #34495e;
+            --header-text: #ffffff;
+            --accent-bg: #ebf5fb;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e0e0e0;
+            --border-color: #0f3460;
+            --primary-color: #e94560;
+            --header-bg: #0f3460;
+            --header-text: #ffffff;
+            --accent-bg: #1f4068;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        /* Header Controls */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .theme-toggle-btn {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.4rem;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        /* Form Controls */
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .field-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .element-card {
+            background: var(--accent-bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        /* Results & Tables */
+        .result-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.92rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+        }
+
+        .summary-box {
+            background-color: var(--accent-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        /* Footer Notes */
+        .footer-credits {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #27ae60;
+            color: white;
+        }
+
+        /* Print styles */
+        @media print {
+            .theme-toggle-btn, .btn-calc, .actions, input {
+                border: none !important;
+                background: transparent !important;
+            }
+            .btn-calc, .actions, .theme-toggle-btn {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .container {
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="appContainer">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <button class="theme-toggle-btn" onclick="toggleTheme()">🌙 حالت شب / روز</button>
+        <h1>سامانه محاسبه و تحلیل مزاج بر اساس عناصر آسترولوژی</h1>
+    </div>
+
+    <!-- Inputs -->
+    <div class="form-group">
+        <div class="field-box">
+            <label for="fullName">نام و نام خانوادگی:</label>
+            <input type="text" id="fullName" placeholder="مثلاً: حسین مسعودیان" value=" ">
+        </div>
+        <div class="field-box">
+            <label>تاریخ و ساعت ثبت:</label>
+            <input type="text" id="dateTime" readonly>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom: 10px;">امتیاز عناصر (بر اساس جدول آسترولوژی):</h3>
+    <div class="elements-grid">
+        <div class="element-card">
+            <label for="fire">🔥 آتش</label>
+            <input type="number" id="fire" value="0" min="0" step="0.5">
+        </div>
+        <div class="element-card">
+            <label for="earth">🌍 خاک</label>
+            <input type="number" id="earth" value="0" min="0" step="0.5">
+        </div>
+        <div class="element-card">
+            <label for="air">🌬️ هوا</label>
+            <input type="number" id="air" value="0" min="0" step="0.5">
+        </div>
+        <div class="element-card">
+            <label for="water">💧 آب</label>
+            <input type="number" id="water" value="0" min="0" step="0.5">
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculateTemperament()">محاسبه و تحلیل مزاج</button>
+
+    <!-- Results Section -->
+    <div class="result-section" id="resultSection">
+        <h3>نتایج کیفیت‌ها و محاسبات:</h3>
+        <div class="summary-box">
+            <div><strong>گرمی (آتش + هوا):</strong> <span id="scoreHot">0</span></div>
+            <div><strong>سردی (خاک + آب):</strong> <span id="scoreCold">0</span></div>
+            <div><strong>تری (آب + هوا):</strong> <span id="scoreWet">0</span></div>
+            <div><strong>خشکی (آتش + خاک):</strong> <span id="scoreDry">0</span></div>
+        </div>
+
+        <div style="text-align: center; padding: 10px; background: var(--header-bg); color: var(--header-text); border-radius: 6px; font-size: 1.1rem; margin-bottom: 20px;">
+            مزاج تشخیصی نهایی: <strong id="finalTemperament" style="color: #f1c40f;">-</strong>
+        </div>
+
+        <h3>جدول مشخصات مزاج (مرجع آسترولوژی):</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>مزاج</th>
+                    <th>ترکیب کیفیت‌ها</th>
+                    <th>نام در مزاج‌شناسی</th>
+                    <th>عنصر</th>
+                    <th>نمود بدنی</th>
+                    <th>ویژگی کلی</th>
+                </tr>
+            </thead>
+            <tbody id="temperamentTableBody">
+                <!-- Rows injected via JS -->
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <button class="btn-action" onclick="window.print()">🖨️ ذخیره به صورت PDF / چاپ</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-credits">
+            <div>بر اساس آموزه‌های استاد صالحی</div>
+            <div style="direction: ltr;">Created by H. Masoudian</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set auto date & time (Persian Calendar)
+    function updateDateTime() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const persianDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
+        document.getElementById('dateTime').value = persianDate;
+    }
+    updateDateTime();
+
+    // Theme Toggle
+    function toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            body.removeAttribute('data-theme');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+        }
+    }
+
+    // Database from the uploaded image
+    const temperamentData = [
+        {
+            key: 'گرم و خشک',
+            qualities: 'گرمی + خشکی',
+            humor: 'صفراوی',
+            element: 'آتش 🔥',
+            physical: 'متابولیسم بالا و کالری‌سوزی سریع',
+            features: 'انرژی و حرارت بالا، فعالیت و تحرک، سرعت بیشتر در متابولیسم و مصرف انرژی'
+        },
+        {
+            key: 'سرد و خشک',
+            qualities: 'سردی + خشکی',
+            humor: 'سوداوی',
+            element: 'خاک 🌍',
+            physical: 'تراکم استخوانی و ساختار سخت بدن',
+            features: 'ثبات، تراکم، ساختار و خشکی بیشتر'
+        },
+        {
+            key: 'گرم و تر',
+            qualities: 'گرمی + تری',
+            humor: 'دموی',
+            element: 'هوا 🌬️',
+            physical: 'گردش خون قوی و حجم تنفسی بالا',
+            features: 'گردش و جریان، پویایی، ارتباط و تحرک'
+        },
+        {
+            key: 'سرد و تر',
+            qualities: 'سردی + تری',
+            humor: 'بلغمی',
+            element: 'آب 💧',
+            physical: 'سیستم لنفاوی فعال و احتباس مایعات',
+            features: 'رطوبت، سیالیت، احتباس و فعالیت سیستم لنفاوی'
+        }
+    ];
+
+    function calculateTemperament() {
+        const fire = parseFloat(document.getElementById('fire').value) || 0;
+        const earth = parseFloat(document.getElementById('earth').value) || 0;
+        const air = parseFloat(document.getElementById('air').value) || 0;
+        const water = parseFloat(document.getElementById('water').value) || 0;
+
+        // Formula Calculations
+        const hot = fire + air;
+        const cold = earth + water;
+        const wet = water + air;
+        const dry = fire + earth;
+
+        document.getElementById('scoreHot').innerText = hot;
+        document.getElementById('scoreCold').innerText = cold;
+        document.getElementById('scoreWet').innerText = wet;
+        document.getElementById('scoreDry').innerText = dry;
+
+        // Quality Determination
+        const tempTemp = (hot >= cold) ? 'گرم' : 'سرد';
+        const tempMoist = (wet > dry) ? 'تر' : 'خشک';
+        const finalResultKey = `${tempTemp} و ${tempMoist}`;
+
+        document.getElementById('finalTemperament').innerText = finalResultKey;
+
+        // Render Table and Highlight Active Row
+        const tbody = document.getElementById('temperamentTableBody');
+        tbody.innerHTML = '';
+
+        temperamentData.forEach(item => {
+            const isSelected = item.key === finalResultKey;
+            const row = document.createElement('tr');
+            if (isSelected) {
+                row.style.backgroundColor = 'var(--accent-bg)';
+                row.style.fontWeight = 'bold';
+            }
+
+            row.innerHTML = `
+                <td>${item.key} ${isSelected ? '✅' : ''}</td>
+                <td>${item.qualities}</td>
+                <td>${item.humor}</td>
+                <td>${item.element}</td>
+                <td>${item.physical}</td>
+                <td>${item.features}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('resultSection').style.display = 'block';
+    }
+</script>
+</body>
+</html>
