@@ -39,7 +39,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -48,7 +48,7 @@
             width: 100%;
             max-width: 900px;
             background-color: var(--card-bg);
-            padding: 30px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             position: relative;
@@ -62,6 +62,7 @@
             margin-bottom: 25px;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 15px;
+            gap: 10px;
         }
 
         .theme-toggle-btn {
@@ -72,12 +73,13 @@
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            white-space: nowrap;
         }
 
         h1 {
             text-align: center;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             margin: 0;
             color: var(--text-color);
         }
@@ -108,18 +110,19 @@
             background-color: var(--card-bg);
             color: var(--text-color);
             font-size: 1rem;
+            width: 100%;
         }
 
         .elements-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
             margin-bottom: 25px;
         }
 
         .element-card {
             background: var(--accent-bg);
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             text-align: center;
             border: 1px solid var(--border-color);
@@ -144,11 +147,19 @@
             margin-top: 20px;
         }
 
+        /* Responsive Table Wrapper */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
+            min-width: 600px; /* ضمان عدم فشرده شدن بیش از حد جدول */
         }
 
         th, td {
@@ -168,7 +179,7 @@
             border-radius: 8px;
             margin-bottom: 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
@@ -202,6 +213,34 @@
             color: white;
         }
 
+        /* Responsive adjustments for mobile */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .top-bar {
+                flex-direction: column-reverse;
+                gap: 12px;
+            }
+
+            h1 {
+                font-size: 1.1rem;
+            }
+
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+
+            .elements-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .summary-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Print styles */
         @media print {
             .theme-toggle-btn, .btn-calc, .actions, input {
@@ -219,6 +258,9 @@
                 box-shadow: none !important;
                 padding: 0 !important;
             }
+            .table-responsive {
+                overflow: visible !important;
+            }
         }
     </style>
 </head>
@@ -235,7 +277,7 @@
     <div class="form-group">
         <div class="field-box">
             <label for="fullName">نام و نام خانوادگی:</label>
-            <input type="text" id="fullName" placeholder="مثلاً: حسین مسعودیان" value=" ">
+            <input type="text" id="fullName" placeholder="مثلاً: حسین مسعودیان">
         </div>
         <div class="field-box">
             <label>تاریخ و ساعت ثبت:</label>
@@ -247,19 +289,19 @@
     <div class="elements-grid">
         <div class="element-card">
             <label for="fire">🔥 آتش</label>
-            <input type="number" id="fire" value="0" min="0" step="0.5">
+            <input type="number" id="fire" placeholder="0" min="0" step="1" required>
         </div>
         <div class="element-card">
             <label for="earth">🌍 خاک</label>
-            <input type="number" id="earth" value="0" min="0" step="0.5">
+            <input type="number" id="earth" placeholder="0" min="0" step="1" required>
         </div>
         <div class="element-card">
             <label for="air">🌬️ هوا</label>
-            <input type="number" id="air" value="0" min="0" step="0.5">
+            <input type="number" id="air" placeholder="0" min="0" step="1" required>
         </div>
         <div class="element-card">
             <label for="water">💧 آب</label>
-            <input type="number" id="water" value="0" min="0" step="0.5">
+            <input type="number" id="water" placeholder="0" min="0" step="1" required>
         </div>
     </div>
 
@@ -280,21 +322,23 @@
         </div>
 
         <h3>جدول مشخصات مزاج (مرجع آسترولوژی):</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>مزاج</th>
-                    <th>ترکیب کیفیت‌ها</th>
-                    <th>نام در مزاج‌شناسی</th>
-                    <th>عنصر</th>
-                    <th>نمود بدنی</th>
-                    <th>ویژگی کلی</th>
-                </tr>
-            </thead>
-            <tbody id="temperamentTableBody">
-                <!-- Rows injected via JS -->
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>مزاج</th>
+                        <th>ترکیب کیفیت‌ها</th>
+                        <th>نام در مزاج‌شناسی</th>
+                        <th>عنصر</th>
+                        <th>نمود بدنی</th>
+                        <th>ویژگی کلی</th>
+                    </tr>
+                </thead>
+                <tbody id="temperamentTableBody">
+                    <!-- Rows injected via JS -->
+                </tbody>
+            </table>
+        </div>
 
         <div class="actions">
             <button class="btn-action" onclick="window.print()">🖨️ ذخیره به صورت PDF / چاپ</button>
@@ -329,7 +373,7 @@
         }
     }
 
-    // Database from the uploaded image
+    // Database
     const temperamentData = [
         {
             key: 'گرم و خشک',
@@ -366,10 +410,21 @@
     ];
 
     function calculateTemperament() {
-        const fire = parseFloat(document.getElementById('fire').value) || 0;
-        const earth = parseFloat(document.getElementById('earth').value) || 0;
-        const air = parseFloat(document.getElementById('air').value) || 0;
-        const water = parseFloat(document.getElementById('water').value) || 0;
+        const fireVal = document.getElementById('fire').value.trim();
+        const earthVal = document.getElementById('earth').value.trim();
+        const airVal = document.getElementById('air').value.trim();
+        const waterVal = document.getElementById('water').value.trim();
+
+        // Validation for empty fields
+        if (fireVal === "" || earthVal === "" || airVal === "" || waterVal === "") {
+            alert("لطفاً تمامی امتیازات ۴ عنصر (آتش، خاک، هوا، آب) را وارد نمایید.");
+            return;
+        }
+
+        const fire = parseFloat(fireVal);
+        const earth = parseFloat(earthVal);
+        const air = parseFloat(airVal);
+        const water = parseFloat(waterVal);
 
         // Formula Calculations
         const hot = fire + air;
